@@ -36,6 +36,7 @@ void TableDtor (Table* table)
     free (table->array);
     if (table->str)
         free (table->str);
+
     free (table);
     
 }
@@ -47,8 +48,10 @@ void LoadingData (const char* name_file, Table* table)
     char* array = ReadFile (file, &size_file);
     table->str = array;
 
+    int i = 0;
     while (array[0])
     {
+        i++;
         int n = 0;
         sscanf (array, "%*[^ \n]%n", &n);
         array[n] = '\0';
@@ -60,6 +63,7 @@ void LoadingData (const char* name_file, Table* table)
         array += n + 1;
         SkipSpace (&array);
     }
+    printf ("all words = %d\n", i);
 }
 
 void SkipSpace (char** str)
@@ -91,4 +95,36 @@ void StrToLower(char* str)
         *str = tolower((unsigned char)*str);
         str++;
     }
+}
+
+int Test (Table* table)
+{
+    FILE* file = fopen ("./data/linux.words", "r");
+    size_t size_file = 0;
+    char* array = ReadFile (file, &size_file);
+    char* origin_array = array;
+
+    int i = 0;
+    int sum = 0;
+    while (array[0])
+    {
+        // i++;
+        // if (i % 10000 == 0)
+        //     printf ("%d\n", i);
+
+        int n = 0;
+        sscanf (array, "%*[^\n]%n", &n);
+        array[n] = '\0';
+
+        // StrToLower (array);
+        int index = PolynomialHash (array);
+        sum += FindElement (array, table->array[index % table->size]) > 0 ? 1 : 0;
+
+        array += n + 1;
+        // SkipSpace (&array);
+    }
+
+    free (origin_array);
+
+    return sum;
 }

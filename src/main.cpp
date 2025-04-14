@@ -5,10 +5,9 @@
 
 int main ()
 {
-    Table* table = TableCtor (1000003);
+    Table* table = TableCtor (10000);
     LoadingData ("./data/War_and_Peace.txt", table);
-    char* a = "clean";
-    int n = FindElement (a, table->array[PolynomialHash (a) % table->size]);
-    printf ("n = %d\n", n);
+    int n = Test (table);
+    printf ("%d\n", n);
     TableDtor (table);
 }

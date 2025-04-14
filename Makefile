@@ -17,10 +17,10 @@ ifeq ($(origin CC),default)
 	CC = g++
 endif 
 
-LDFLAGS = -L./lib -lmylist -lfileproces
+LDFLAGS = -L./lib -lfileproces
 # INTRINSIC = -msse4.1 -msse4.2 -mavx2 -mavx
 
-CFLAGS ?= -O3
+CFLAGS ?= -O0 -g
 OUT_O_DIR ?= build
 COMMONINC = -I./lib -I./include
 INSTALL_DIR = /usr/local/bin
@@ -33,7 +33,7 @@ ifeq ($(debug), true)
     override LDFLAGS += $(DEBUG_FLAGS)        
 endif
 
-CSRC = src/main.cpp src/func.cpp
+CSRC = src/main.cpp src/func.cpp lib/List.cpp
 COBJ = $(addprefix $(OUT_O_DIR)/,$(CSRC:.cpp=.o))
 DEPS = $(COBJ:.o=.d)
 

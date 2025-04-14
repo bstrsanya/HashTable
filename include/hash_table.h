@@ -14,5 +14,6 @@ void LoadingData (const char* name_file, Table* table);
 void SkipSpace (char** str);
 unsigned int PolynomialHash (char* str);
 void StrToLower (char *str);
+int Test (Table* table);
 
 #endif // HASH_TABLE
