@@ -2,3 +2,4 @@ build
 data
 hash_table
 *out*
+perf.data

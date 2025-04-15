@@ -53,12 +53,16 @@ void LoadingData (const char* name_file, Table* table)
     {
         i++;
         int n = 0;
-        sscanf (array, "%*[^ \n]%n", &n);
+        while (array[n] != '\n' && array[n] != ' ')
+        {
+            n++;
+        }
+        // sscanf (array, "%*[^ \n]%n", &n);
         array[n] = '\0';
 
         StrToLower (array);
         int index = PolynomialHash (array);
-        Insert (array, table->array[index % table->size]);
+        Insert (array, n, table->array[index % table->size]);
 
         array += n + 1;
         SkipSpace (&array);
@@ -69,7 +73,10 @@ void LoadingData (const char* name_file, Table* table)
 void SkipSpace (char** str)
 {
     int n = 0;
-    sscanf (*str, "%*[\r \n]%n", &n);
+    while ((*str)[n] == '\r' || (*str)[n] == ' ' || (*str)[n] == '\n') {
+        n++;
+    }
+    // sscanf (*str, "%*[\r \n]%n", &n);
     *str += n;
 }
 
@@ -104,21 +111,20 @@ int Test (Table* table)
     char* array = ReadFile (file, &size_file);
     char* origin_array = array;
 
-    int i = 0;
     int sum = 0;
     while (array[0])
     {
-        // i++;
-        // if (i % 10000 == 0)
-        //     printf ("%d\n", i);
-
         int n = 0;
-        sscanf (array, "%*[^\n]%n", &n);
+        while (array[n] != '\n')
+        {
+            n++;
+        }
+        // sscanf (array, "%*[^\n]%n", &n);
         array[n] = '\0';
 
         // StrToLower (array);
         int index = PolynomialHash (array);
-        sum += FindElement (array, table->array[index % table->size]) > 0 ? 1 : 0;
+        sum += FindElement (array, n, table->array[index % table->size]) > 0 ? 1 : 0;
 
         array += n + 1;
         // SkipSpace (&array);

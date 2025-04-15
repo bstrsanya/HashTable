@@ -6,6 +6,7 @@
 struct NODE
 {
     char* str;
+    int len;
     int n_repeat;
 };
 
@@ -29,10 +30,10 @@ int MyRealloc (LIST* list);
 // int InsertTail   (Elem_t value, LIST* list);
 // int InsertBefore (Elem_t value, int point, LIST* list);
 
-int Insert (char* str, LIST* list);
-int Find (char* value, LIST* list);
+int Insert (char* str, int len, LIST* list);
+int Find (char* value, int len, LIST* list);
 
-int FindElement (char* value, LIST* list);
+int FindElement (char* value, int len, LIST* list);
 
 // void DeleteHead  (LIST* list);
 // void DeleteTail  (LIST* list);

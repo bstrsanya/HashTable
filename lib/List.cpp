@@ -40,6 +40,7 @@ LIST* ListCtor (size_t size)
         list_calloc->prev[i] = EMPTY_CELL;
         list_calloc->data[i].n_repeat = EMPTY_CELL;
         list_calloc->data[i].str = NULL;
+        list_calloc->data[i].len = 0;
     }
 
     list_calloc->next[0]        = 0;
@@ -70,11 +71,11 @@ void ListDtor (LIST* list)
     list = 0;
 }
 
-int Insert (char* str, LIST* list)
+int Insert (char* str, int len, LIST* list)
 {
     assert (list);
 
-    int index = Find (str, list);
+    int index = Find (str, len, list);
     if (index != -1)
     {
         list->data[index].n_repeat += 1;
@@ -88,6 +89,7 @@ int Insert (char* str, LIST* list)
         int next_free = list->next[list->free];
 
         list->data[list->free].str = str;
+        list->data[list->free].len = len;
         list->data[list->free].n_repeat = 1;
         list->next[list->free] = list->next[0];
         list->prev[list->free] = 0;
@@ -181,25 +183,33 @@ int Insert (char* str, LIST* list)
 // }
 
 
-int FindElement (char* value, LIST* list)
-{
-    assert (list);
-
-    for (int i = 1; i < (int) list->size; i++)
-        if (list->data[i].str && !strcmp (value, list->data[i].str))
-            return list->data[i].n_repeat;
-
-    return -1;
-}
-
-int Find (char* value, LIST* list)
+int FindElement (char* value, int len, LIST* list)
 {
     assert (list);
 
     for (int i = 1; i < (int) list->size; i++)
     {
-        if (list->data[i].str && !strcmp (value, list->data[i].str))
-            return i;
+        if (len != list->data[i].len)
+            continue;
+        else
+            if (list->data[i].str && !strncmp (value, list->data[i].str, list->data[i].len))
+                return list->data[i].n_repeat;
+    }
+
+    return -1;
+}
+
+int Find (char* value, int len, LIST* list)
+{
+    assert (list);
+
+    for (int i = 1; i < (int) list->size; i++)
+    {
+        if (list->data[i].len != len)
+            continue;
+        else
+            if (list->data[i].str && !strncmp (value, list->data[i].str, len))
+                return i;
     }
 
     return -1;
