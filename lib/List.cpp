@@ -31,7 +31,8 @@ LIST* ListCtor (size_t size)
     list_calloc->data = data_calloc;
     list_calloc->next = next_calloc;
     list_calloc->prev = prev_calloc;
-    list_calloc->size = size;
+    list_calloc->capacity = size;
+    list_calloc->size = 0;
     list_calloc->free = 1;
 
     for (int i = 0; i < (int) size; i++)
@@ -66,6 +67,7 @@ void ListDtor (LIST* list)
     list->free = 0;
 
     list->size = 0;  
+    list->capacity = 0;
 
     free (list);
     list = 0;
@@ -93,6 +95,7 @@ int Insert (char* str, int len, LIST* list)
         list->data[list->free].n_repeat = 1;
         list->next[list->free] = list->next[0];
         list->prev[list->free] = 0;
+        list->size += 1;
 
         list->prev[list->next[0]] = list->free;
         list->next[0] = list->free;
@@ -187,13 +190,16 @@ int FindElement (char* value, int len, LIST* list)
 {
     assert (list);
 
-    for (int i = 1; i < (int) list->size; i++)
+    for (int i = 1; i < (int) list->capacity; i++)
     {
-        if (len != list->data[i].len)
-            continue;
-        else
-            if (list->data[i].str && !strncmp (value, list->data[i].str, list->data[i].len))
-                return list->data[i].n_repeat;
+        // if (len != list->data[i].len)
+        //     continue;
+        
+        // if (list->data[i].str && !strncmp (value, list->data[i].str, list->data[i].len))
+        //     return list->data[i].n_repeat;
+
+        if (list->data[i].str && !strcmp (list->data[i].str, value))
+            return list->data[i].n_repeat;
     }
 
     return -1;
@@ -203,12 +209,12 @@ int Find (char* value, int len, LIST* list)
 {
     assert (list);
 
-    for (int i = 1; i < (int) list->size; i++)
+    for (int i = 1; i < (int) list->capacity; i++)
     {
         if (list->data[i].len != len)
             continue;
         else
-            if (list->data[i].str && !strncmp (value, list->data[i].str, len))
+            if (list->data[i].str && !strncmp (value, list->data[i].str, (size_t) len))
                 return i;
     }
 
@@ -219,24 +225,24 @@ int MyRealloc (LIST* list)
 {
     assert (list);
 
-    Elem_t* new_data = (Elem_t*) realloc (list->data, (size_t) (list->size) * 2 * sizeof (Elem_t));
+    Elem_t* new_data = (Elem_t*) realloc (list->data, (size_t) (list->capacity) * 2 * sizeof (Elem_t));
     if (new_data == 0) 
         return ERROR_REALLOC;
     list->data = new_data;
 
-    int* new_next = (int*) realloc (list->next, (size_t) (list->size) * 2 * sizeof (int));
+    int* new_next = (int*) realloc (list->next, (size_t) (list->capacity) * 2 * sizeof (int));
     if (new_next == 0) 
         return ERROR_REALLOC;
     list->next = new_next;
 
-    int* new_prev = (int*) realloc (list->prev, (size_t) (list->size) * 2 * sizeof (int));
+    int* new_prev = (int*) realloc (list->prev, (size_t) (list->capacity) * 2 * sizeof (int));
     if (new_prev == 0) 
         return ERROR_REALLOC;
     list->prev = new_prev;
 
-    list->size *= 2;
+    list->capacity *= 2;
 
-    for (int i = (int) list->size / 2; i < (int) list->size; i++) 
+    for (int i = (int) list->capacity / 2; i < (int) list->capacity; i++) 
     {
         list->next[i] = i + 1;
         list->data[i].n_repeat = EMPTY_CELL;
@@ -244,7 +250,7 @@ int MyRealloc (LIST* list)
         list->prev[i] = EMPTY_CELL;
     }
 
-    list->next[list->size - 1] = EMPTY_CELL;
-    list->free = (int) list->size / 2;
+    list->next[list->capacity - 1] = EMPTY_CELL;
+    list->free = (int) list->capacity / 2;
     return OK;
 }

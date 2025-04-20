@@ -18,6 +18,7 @@ struct LIST
     int* next;
     int* prev;
     size_t size;
+    size_t capacity;
     int free;
 };    
 

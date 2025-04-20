@@ -3,3 +3,7 @@ data
 hash_table
 *out*
 perf.data
+.vscode
+res.txt
+report.txt
+a

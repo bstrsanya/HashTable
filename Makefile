@@ -33,7 +33,7 @@ ifeq ($(debug), true)
     override LDFLAGS += $(DEBUG_FLAGS)        
 endif
 
-CSRC = src/main.cpp src/func.cpp lib/List.cpp lib/ReadFile.cpp lib/SizeFile.cpp
+CSRC = src/main.cpp src/func.cpp lib/List.cpp lib/ReadFile.cpp lib/SizeFile.cpp src/initial_func.cpp
 COBJ = $(addprefix $(OUT_O_DIR)/,$(CSRC:.cpp=.o))
 DEPS = $(COBJ:.o=.d)
 
