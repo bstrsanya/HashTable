@@ -94,8 +94,8 @@ t = (15,6 ± 0,8) * 10^9
 $$
 
 #### Отчет профилировщика
-<img src="img/3.png" width="65%" align="center">
-<img src="img/4.png" width="65%" align="center">
+<img src="img/3.png" width="85%" align="center">
+<img src="img/4.png" width="85%" align="center">
 
 
 ### Запуск 2 (оптимизация strcmp)
@@ -169,8 +169,8 @@ t = (13,0 ± 0,3) * 10^9
 $$
 
 #### Отчет профилировщика
-<img src="img/5.png" width="65%" align="center">
-<img src="img/6.png" width="65%" align="center">
+<img src="img/5.png" width="85%" align="center">
+<img src="img/6.png" width="85%" align="center">
 
 #### Результаты
-Удалось увеличить скорость выполнения на $16,7\%$.
+Удалось увеличить скорость выполнения на $16,7 \%$.
