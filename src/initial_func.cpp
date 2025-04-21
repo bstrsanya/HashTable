@@ -2,12 +2,15 @@
 #include "fileproces.h"
 #include "hash_table.h"
 
+#include <xmmintrin.h>
+#include <immintrin.h>
+
 Table* TableCtor (size_t size)
 {
-    Table* table = (Table*) calloc (1, sizeof (Table));
+    Table* table = (Table*) aligned_alloc (32, sizeof (Table));
     assert (table);
 
-    LIST** array = (LIST**) calloc (size, sizeof (LIST*));
+    LIST** array = (LIST**) aligned_alloc (32, size * sizeof (LIST*));
     assert (array);
 
     for (size_t i = 0; i < size; i++)
@@ -57,6 +60,7 @@ void ParsingText (const char* name_file, Table* table)
 
         WordProcessing (&array, n);
 
+        // if (*array) 
         table->num[i++] = array;
 
         array += n + 1;

@@ -2,8 +2,11 @@
 #include <stdarg.h>
 #include <string.h>
 #include <assert.h>
-
+#include <xmmintrin.h>
+#include <immintrin.h>
 #include <mylist.h>
+#include <ctype.h>
+#include <cstdint>
 
 #define ERROR(a, b) {int c = 0; if ((c = a) != b) return c;}
 
@@ -12,7 +15,7 @@ LIST* ListCtor (size_t size)
     if (!size) 
         return NULL;
 
-    Elem_t* data_calloc = (Elem_t*) calloc (size, sizeof (Elem_t));
+    Elem_t* data_calloc = (Elem_t*) aligned_alloc (32, size * sizeof (Elem_t));
     if (data_calloc == NULL) 
         return NULL;
     
@@ -24,7 +27,7 @@ LIST* ListCtor (size_t size)
     if (prev_calloc == NULL) 
         return NULL;
     
-    LIST* list_calloc = (LIST*) calloc (1, sizeof (LIST));
+    LIST* list_calloc = (LIST*) aligned_alloc (32, sizeof (LIST));
     if (list_calloc == NULL) 
         return NULL;
 
@@ -90,6 +93,11 @@ int Insert (char* str, int len, LIST* list)
 
         int next_free = list->next[list->free];
 
+        uint8_t buf[32] = {0};
+        memcpy (buf, str, len);
+        __m256i vec = _mm256_loadu_si256 ((__m256i*) buf);
+        list->data[list->free].avx = vec;        
+
         list->data[list->free].str = str;
         list->data[list->free].len = len;
         list->data[list->free].n_repeat = 1;
@@ -106,91 +114,11 @@ int Insert (char* str, int len, LIST* list)
 
 }
 
-// int InsertAfter (Elem_t value, int point, LIST* list)
-// {
-//     assert (list);
-
-//     if (list->free == EMPTY_CELL)
-//         ERROR (MyRealloc (list), OK);
-
-//     int next_free = list->next[list->free];
-
-//     list->data[list->free] = value;
-//     list->next[list->free] = list->next[point];
-//     list->prev[list->free] = point;
-
-//     list->prev[list->next[point]] = list->free;
-//     list->next[point] = list->free;
-//     list->free = next_free; 
-    
-//     return OK;
-// }
-
-// int InsertBefore (Elem_t value, int point, LIST* list)
-// {
-//     assert (list);
-
-//     if (list->free == EMPTY_CELL)
-//         ERROR (MyRealloc (list), OK);
-
-//     int next_free = list->next[list->free];
-    
-//     list->data[list->free] = value;
-//     list->next[list->free] = point;
-//     list->prev[list->free] = list->prev[point];
-
-//     list->next[list->prev[point]] = list->free;
-//     list->prev[point] = list->free;
-//     list->free = next_free;   
-
-
-//     return OK;
-// }
-
-// int InsertHead (Elem_t value, LIST* list)
-// {
-//     ERROR (InsertAfter (value, 0, list), OK);
-
-//     return OK;
-// }
-
-// int InsertTail (Elem_t value, LIST* list)
-// {
-//     ERROR (InsertBefore (value, 0, list), OK);
-
-//     return OK;
-// }
-
-// void DeletePoint (int point, LIST* list)
-// {
-//     assert (list);
-
-//     list->data[point].str = NULL;
-//     list->data[point].n_repeat = EMPTY_CELL;
-//     list->prev[list->next[point]] = list->prev[point];
-//     list->next[list->prev[point]] = list->next[point];
-//     list->next[point] = list->free;
-//     list->free = point;
-//     list->prev[point] = EMPTY_CELL;
-
-// }
-
-// void DeleteHead  (LIST* list)
-// {
-//     DeletePoint (list->next[0], list);
-// }
-
-// void DeleteTail (LIST* list)
-// {
-//     DeletePoint (list->prev[0], list);
-// }
-
-
 int FindElement (char* value, int len, LIST* list)
 {
-    assert (list);
+    // assert (list);
 
-    for (int i = 1; i < (int) list->capacity; i++)
+    for (int i = 1; i < (int) list->size; i++)
     {
         // if (len != list->data[i].len)
         //     continue;
@@ -198,7 +126,17 @@ int FindElement (char* value, int len, LIST* list)
         // if (list->data[i].str && !strncmp (value, list->data[i].str, list->data[i].len))
         //     return list->data[i].n_repeat;
 
-        if (list->data[i].str && !strcmp (list->data[i].str, value))
+        // if (!strcmp (list->data[i].str, value))
+        //     return list->data[i].n_repeat;
+
+        alignas(32) uint8_t buf[32] = {0};
+        memcpy (buf, value, len % 32);
+        __m256i vec = _mm256_load_si256 ((__m256i*) buf);
+
+        __m256i cmp = _mm256_xor_si256 (vec, list->data[i].avx);
+        int result = _mm256_testz_si256(cmp, cmp);
+
+        if (result == 1)
             return list->data[i].n_repeat;
     }
 

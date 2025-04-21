@@ -3,8 +3,12 @@
 
 #include <stdio.h>
 
+#include <xmmintrin.h>
+#include <immintrin.h>
+
 struct NODE
 {
+    alignas(32) __m256i avx;
     char* str;
     int len;
     int n_repeat;
