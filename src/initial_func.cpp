@@ -76,7 +76,7 @@ void SkipSpace (char** str)
 void WordProcessing (char** str, int n) 
 {
     for (int i = 0; i < n; i++)
-        (*str)[i] = tolower ((int) (*str)[i]);
+        (*str)[i] = (char) tolower ((*str)[i]);
 
     (*str)[n] = '\0';
     n--;

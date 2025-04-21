@@ -20,7 +20,7 @@ endif
 # LDFLAGS = -L./lib -lfileproces
 # INTRINSIC = -msse4.1 -msse4.2 -mavx2 -mavx
 
-CFLAGS ?= -O0 -g
+CFLAGS ?= -O3 -g
 OUT_O_DIR ?= build
 COMMONINC = -I./lib -I./include
 INSTALL_DIR = /usr/local/bin

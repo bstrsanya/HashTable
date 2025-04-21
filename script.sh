@@ -1,5 +1,6 @@
 #!/bin/bash
 
-make debug=true
-./hash_table > res.txt
-python3 1.py 'res.txt' 'murmur.png' 'Murmur хеш.'
+for (( a = 0; a < 20; a++ ))
+do
+    ./hash_table
+done

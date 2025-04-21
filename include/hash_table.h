@@ -25,7 +25,7 @@ void SkipSpace (char** str);
 int PolynomialHash (char* str);
 void WordProcessing (char** str, int n); 
 int Test (Table* table);
-unsigned int MurmurHash2 (char * key, unsigned int len);
+int MurmurHash2 (char* key);
 int crc32HashFunc (char *buf);
 
 int LenStrHashFunc (char* str);
