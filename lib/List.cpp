@@ -116,27 +116,16 @@ int Insert (char* str, int len, LIST* list)
 
 int FindElement (char* value, int len, LIST* list)
 {
-    // assert (list);
+    alignas(32) uint8_t buf[32] = {};
+    memcpy (buf, value, len % 31);
+    __m256i vec = _mm256_load_si256 ((__m256i*) buf);
 
-    for (int i = 1; i < (int) list->size; i++)
+    for (size_t i = 1; i < list->size; i++)
     {
-        // if (len != list->data[i].len)
-        //     continue;
-        
-        // if (list->data[i].str && !strncmp (value, list->data[i].str, list->data[i].len))
-        //     return list->data[i].n_repeat;
+        __m256i cmp = _mm256_cmpeq_epi32 (vec, list->data[i].avx);
+        int mask = _mm256_movemask_epi8 (cmp);  
 
-        // if (!strcmp (list->data[i].str, value))
-        //     return list->data[i].n_repeat;
-
-        alignas(32) uint8_t buf[32] = {0};
-        memcpy (buf, value, len % 32);
-        __m256i vec = _mm256_load_si256 ((__m256i*) buf);
-
-        __m256i cmp = _mm256_xor_si256 (vec, list->data[i].avx);
-        int result = _mm256_testz_si256(cmp, cmp);
-
-        if (result == 1)
+        if (mask == 0xFFFFFFFF)
             return list->data[i].n_repeat;
     }
 
@@ -145,8 +134,6 @@ int FindElement (char* value, int len, LIST* list)
 
 int Find (char* value, int len, LIST* list)
 {
-    assert (list);
-
     for (int i = 1; i < (int) list->capacity; i++)
     {
         if (list->data[i].len != len)

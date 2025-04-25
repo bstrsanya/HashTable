@@ -47,7 +47,7 @@ void ParsingText (const char* name_file, Table* table)
     char* array = ReadFile (file, &size_file);
     table->str = array;
 
-    table->num = (char**) calloc (600000, sizeof (char*));
+    table->num = (char**) calloc (MAX_NUM_WORDS, sizeof (char*));
     assert (table->num);
 
     int i = 0;
@@ -60,7 +60,6 @@ void ParsingText (const char* name_file, Table* table)
 
         WordProcessing (&array, n);
 
-        // if (*array) 
         table->num[i++] = array;
 
         array += n + 1;

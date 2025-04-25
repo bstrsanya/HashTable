@@ -2,7 +2,6 @@
 #define MYLIST_H
 
 #include <stdio.h>
-
 #include <xmmintrin.h>
 #include <immintrin.h>
 
@@ -29,20 +28,9 @@ struct LIST
 LIST* ListCtor (size_t SIZE);
 void ListDtor (LIST* list);
 int MyRealloc (LIST* list);
-
-// int InsertHead   (Elem_t value, LIST* list);
-// int InsertAfter  (Elem_t value, int point, LIST* list);
-// int InsertTail   (Elem_t value, LIST* list);
-// int InsertBefore (Elem_t value, int point, LIST* list);
-
 int Insert (char* str, int len, LIST* list);
 int Find (char* value, int len, LIST* list);
-
 int FindElement (char* value, int len, LIST* list);
-
-// void DeleteHead  (LIST* list);
-// void DeleteTail  (LIST* list);
-// void DeletePoint (int point, LIST* list);
 
 enum ERRORS
 {

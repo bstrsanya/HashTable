@@ -17,7 +17,7 @@ ifeq ($(origin CC),default)
 	CC = gcc
 endif 
 
-# LDFLAGS = -L./lib -lfileproces
+LDFLAGS = -L./lib -lfileproces
 INTRINSIC = -msse4.1 -msse4.2 -mavx2 -mavx
 
 CFLAGS ?= -O3 -g 
@@ -33,7 +33,7 @@ ifeq ($(debug), true)
     override LDFLAGS += $(DEBUG_FLAGS)        
 endif
 
-CSRC = src/main.cpp src/func.cpp lib/List.cpp lib/ReadFile.cpp lib/SizeFile.cpp src/initial_func.cpp
+CSRC = src/main.cpp src/func.cpp lib/List.cpp src/initial_func.cpp
 COBJ = $(addprefix $(OUT_O_DIR)/,$(CSRC:.cpp=.o))
 DEPS = $(COBJ:.o=.d)
 
@@ -41,12 +41,12 @@ DEPS = $(COBJ:.o=.d)
 all: hash_table
 
 hash_table: $(COBJ)
-	@$(CC) $^ -o $@ $(LDFLAGS)
+	$(CC) $^ -o $@ $(LDFLAGS)
 	@echo 'project is created'
 
 $(COBJ) : $(OUT_O_DIR)/%.o : %.cpp
 	@mkdir -p $(@D)
-	@$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 	@echo 'compile $<'
 
 $(DEPS) : $(OUT_O_DIR)/%.d : %.cpp

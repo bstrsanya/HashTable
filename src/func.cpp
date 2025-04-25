@@ -16,25 +16,6 @@ void LoadingData (Table* table)
     }
 }
 
-int PolynomialHash (char* str)
-{
-    long long hash = 0;
-    long long k = 1;
-    int n = 0;
-
-    while (str[n])
-    {
-        hash += (long long) (str[n]) * k;
-        k *= 1013ll;
-        hash %= 1844674407370955;
-        k %= 1844674407370955;
-
-        n++;
-    }
-
-    return (int) (hash % 2147483648);
-}
-
 int Test (Table* table)
 {
     FILE* file = fopen ("./data/linux.words", "r");
@@ -60,6 +41,64 @@ int Test (Table* table)
     free (origin_array);
 
     return sum;
+}
+
+int crc32HashFunc (char *buf, int len)
+{
+    int crc = 0;
+
+    asm volatile 
+    (
+        ".intel_syntax noprefix                \n\t"
+        "       mov eax, -1                    \n\t"    
+        "       mov rsi, %[buf]                \n\t"        
+        "       mov ecx, %[len]                \n\t"
+        
+        "1:     cmp ecx, 4                     \n\t"
+        "       jb 3f                          \n\t"
+        
+        "       crc32 eax, dword ptr [rsi]     \n\t"
+        "       add rsi, 4                     \n\t"
+        "       sub ecx, 4                     \n\t"
+        "       jmp 1b                         \n\t"
+        
+        "3:     test ecx, ecx                  \n\t"           
+        "       jz 2f                          \n\t"                   
+        
+        "4:     crc32 eax, byte ptr [rsi]      \n\t" 
+        "       inc rsi                        \n\t"                 
+        "       dec rcx                        \n\t"                  
+        "       jnz 4b                         \n\t"                   
+        
+        "2:     xor eax, -1                    \n\t"     
+        "       mov %[crc], eax                \n\t"  
+
+        ".att_syntax prefix                    \n\t"
+        : [crc] "=r" (crc)
+        : [buf] "r" (buf), [len] "r" (len)
+        : "rax", "rcx", "rsi", "cc", "memory"
+    );
+
+    return crc;
+}
+
+int PolynomialHash (char* str)
+{
+    long long hash = 0;
+    long long k = 1;
+    int n = 0;
+
+    while (str[n])
+    {
+        hash += (long long) (str[n]) * k;
+        k *= 1013ll;
+        hash %= 1844674407370955;
+        k %= 1844674407370955;
+
+        n++;
+    }
+
+    return (int) (hash % 2147483648);
 }
 
 int MurmurHash2 (char* key)
@@ -128,54 +167,3 @@ int SumLetterHashFunc (char* str)
 
     return sum;
 }
-
-int crc32HashFunc (char *buf, int len)
-{
-    int crc = 0;
-    int n = 0;
-
-    asm (
-        ".intel_syntax noprefix\n\t"
-        "mov eax, -1\n\t"      
-        "mov rsi, %[buf]\n\t"          
-        "mov ecx, %[len]\n\t"         
-        "test ecx, ecx\n\t"            
-        "jz 2f\n\t"                   
-
-        "1:\n\t"                       
-        "movzx edx, byte ptr [rsi]\n\t" 
-        "crc32 eax, dl\n\t"            
-        "inc rsi\n\t"                   
-        "loop 1b\n\t"       
-
-        "2:\n\t"                
-        "xor eax, -1\n\t"      
-        "mov %[crc], eax\n\t"          
-        ".att_syntax prefix\n\t"
-        : [crc] "=r" (crc)              
-        : [buf] "r" (buf), [len] "r" (len)  
-        : "rax", "rcx", "rdx", "rsi", "memory"  
-    );
-
-    return crc;
-    
-    // unsigned crc = 6;
-    // int n = 0;
-    // while (buf[n])
-    // {
-    //   crc = (crc << 8) ^ crc32_table[((crc >> 24) ^ (unsigned) buf[n]) & 255];
-    //   n++;
-    // }
-    
-    // return (int) (crc % 2147483648);
-
-    // size_t crc = 0xFFFFFFFFUL;
-    // int i = 0;
-    // while (buf[i])
-    // {
-    //     crc = _mm_crc32_u8 (crc, buf[i]); 
-    //     i++;
-    // }
-    // return crc ^ 0xFFFFFFFFUL;
-}
-

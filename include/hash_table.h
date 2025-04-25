@@ -35,6 +35,7 @@ int SumLetterHashFunc (char* str);
 
 
 const size_t INITIAL_LIST_SIZE = 30;
+const int MAX_NUM_WORDS = 600000;
 
 static const unsigned int crc32_table[] =
 {
