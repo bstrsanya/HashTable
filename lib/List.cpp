@@ -16,6 +16,7 @@ LIST* ListCtor (size_t size)
         return NULL;
 
     Elem_t* data_calloc = (Elem_t*) aligned_alloc (32, size * sizeof (Elem_t));
+    // Elem_t* data_calloc = (Elem_t*) calloc (size, sizeof (Elem_t));
     if (data_calloc == NULL) 
         return NULL;
     
@@ -27,7 +28,8 @@ LIST* ListCtor (size_t size)
     if (prev_calloc == NULL) 
         return NULL;
     
-    LIST* list_calloc = (LIST*) aligned_alloc (32, sizeof (LIST));
+    // LIST* list_calloc = (LIST*) aligned_alloc (32, sizeof (LIST));
+    LIST* list_calloc = (LIST*) calloc (1, sizeof (LIST));
     if (list_calloc == NULL) 
         return NULL;
 
@@ -111,14 +113,13 @@ int Insert (char* str, int len, LIST* list)
 
     }
     return OK;
-
 }
 
 int FindElement (char* value, int len, LIST* list)
 {
-    alignas(32) uint8_t buf[32] = {};
-    memcpy (buf, value, len % 31);
-    __m256i vec = _mm256_load_si256 ((__m256i*) buf);
+    uint8_t buf[32] = {};
+    memcpy (buf, value, len);
+    __m256i vec = _mm256_loadu_si256 ((__m256i*) buf);
 
     for (size_t i = 1; i < list->size; i++)
     {

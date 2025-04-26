@@ -47,7 +47,7 @@ int crc32HashFunc (char *buf, int len)
 {
     int crc = 0;
 
-    asm volatile 
+    asm 
     (
         ".intel_syntax noprefix                \n\t"
         "       mov eax, -1                    \n\t"    

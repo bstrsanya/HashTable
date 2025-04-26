@@ -7,7 +7,7 @@
 
 struct NODE
 {
-    alignas(32) __m256i avx;
+    __m256i avx;
     char* str;
     int len;
     int n_repeat;

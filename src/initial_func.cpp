@@ -7,10 +7,12 @@
 
 Table* TableCtor (size_t size)
 {
-    Table* table = (Table*) aligned_alloc (32, sizeof (Table));
+    // Table* table = (Table*) aligned_alloc (32, sizeof (Table));
+    Table* table = (Table*) calloc (1, sizeof (Table));
     assert (table);
 
-    LIST** array = (LIST**) aligned_alloc (32, size * sizeof (LIST*));
+    // LIST** array = (LIST**) aligned_alloc (32, size * sizeof (LIST*));
+    LIST** array = (LIST**) calloc (size, sizeof (LIST*));
     assert (array);
 
     for (size_t i = 0; i < size; i++)
