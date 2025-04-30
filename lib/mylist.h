@@ -44,5 +44,6 @@ enum ERRORS
 const int LEN_STR    = 100;
 const int EMPTY_CELL = -1;
 const size_t SIZE    = 5;
+const int MAX_LEN_WORD = 32;
 
 #endif // MYLIST_H

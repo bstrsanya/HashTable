@@ -95,7 +95,7 @@ int Insert (char* str, int len, LIST* list)
 
         int next_free = list->next[list->free];
 
-        uint8_t buf[32] = {0};
+        uint8_t buf[MAX_LEN_WORD] = {0};
         memcpy (buf, str, len);
         __m256i vec = _mm256_loadu_si256 ((__m256i*) buf);
         list->data[list->free].avx = vec;        
@@ -117,7 +117,7 @@ int Insert (char* str, int len, LIST* list)
 
 int FindElement (char* value, int len, LIST* list)
 {
-    uint8_t buf[32] = {};
+    uint8_t buf[MAX_LEN_WORD] = {};
     memcpy (buf, value, len);
     __m256i vec = _mm256_loadu_si256 ((__m256i*) buf);
 
@@ -126,7 +126,7 @@ int FindElement (char* value, int len, LIST* list)
         __m256i cmp = _mm256_cmpeq_epi32 (vec, list->data[i].avx);
         int mask = _mm256_movemask_epi8 (cmp);  
 
-        if (mask == 0xFFFFFFFF)
+        if (mask == -1)
             return list->data[i].n_repeat;
     }
 

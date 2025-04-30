@@ -1,14 +1,13 @@
 #include "mylist.h"
 #include "fileproces.h"
 #include "hash_table.h"
-
 #include <xmmintrin.h>
 #include <immintrin.h>
 
 Table* TableCtor (size_t size)
 {
-    // Table* table = (Table*) aligned_alloc (32, sizeof (Table));
-    Table* table = (Table*) calloc (1, sizeof (Table));
+    Table* table = (Table*) aligned_alloc (32, sizeof (Table));
+    // Table* table = (Table*) calloc (1, sizeof (Table));
     assert (table);
 
     // LIST** array = (LIST**) aligned_alloc (32, size * sizeof (LIST*));

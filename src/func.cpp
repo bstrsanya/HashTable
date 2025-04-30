@@ -7,45 +7,49 @@
 void LoadingData (Table* table)
 {
     int i = 0;
+    
     while (table->num[i])
     {
         int n = (int) strlen (table->num[i]);
-        int index = crc32HashFunc (table->num[i], n);
-        Insert (table->num[i], n, table->array[(size_t) index % table->size]);
+        unsigned int index = crc32HashFunc (table->num[i], n);
+        Insert (table->num[i], n, table->array[index % table->size]);
         i++;
     }
 }
 
 int Test (Table* table)
 {
-    FILE* file = fopen ("./data/linux.words", "r");
+    FILE* file = fopen (FIND_WORDS_FILE, "r");
     size_t size_file = 0;
-    char* array = ReadFile (file, &size_file);
-    char* origin_array = array;
+    char* find_words_array = ReadFile (file, &size_file);
+    char* pointer_array = find_words_array;
+
+    LIST** table_array = table->array;
+    size_t table_size = table->size;
 
     int sum = 0;
-    while (array[0])
+    while (find_words_array[0])
     {
         int n = 0;
-        while (array[n] != '\n')
+        while (find_words_array[n] != '\n')
             n++;
 
-        array[n] = '\0';
+            find_words_array[n] = '\0';
 
-        int index = crc32HashFunc (array, n);
-        sum += FindElement (array, n, table->array[(size_t) index % table->size]);
+        unsigned int index = crc32HashFunc (find_words_array, n);
+        sum += FindElement (find_words_array, n, table_array[index % table_size]);
 
-        array += n + 1;
+        find_words_array += n + 1;
     }
 
-    free (origin_array);
+    free (pointer_array);
 
     return sum;
 }
 
-int crc32HashFunc (char *buf, int len)
+unsigned int crc32HashFunc (char *buf, int len)
 {
-    int crc = 0;
+    unsigned int crc = 0;
 
     asm 
     (

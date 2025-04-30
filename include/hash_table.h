@@ -28,7 +28,7 @@ int PolynomialHash (char* str);
 void WordProcessing (char** str, int n); 
 int Test (Table* table);
 int MurmurHash2 (char* key);
-int crc32HashFunc (char *buf, int len);
+unsigned int crc32HashFunc (char *buf, int len);
 
 int LenStrHashFunc (char* str);
 int SumLetterHashFunc (char* str);
@@ -36,6 +36,10 @@ int SumLetterHashFunc (char* str);
 
 const size_t INITIAL_LIST_SIZE = 30;
 const int MAX_NUM_WORDS = 600000;
+const size_t SIZE_TABLE = 1483;
+const char* const INPUT_FILE = "./data/war.txt";
+const char* const FIND_WORDS_FILE = "./data/linux.words";
+const size_t NUM_TESTS = 100;
 
 static const unsigned int crc32_table[] =
 {
